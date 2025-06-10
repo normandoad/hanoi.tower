@@ -1,0 +1,36 @@
+image: normandoad/bizland-ci:jdk24
+
+stages:
+  - build
+  - test
+  - package
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository
+
+before_script:
+  - echo "Using Maven version:"
+  - mvn -version
+
+build:
+  stage: build
+  script:
+    - mvn -U -Dmaven.test.skip clean install
+
+test:
+  stage: test
+  script:
+    - mvn test
+
+package:
+  stage: package
+  script:
+    - mvn package
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 1 week
